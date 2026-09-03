@@ -3,203 +3,149 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - 6 Sistemas de Análise</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-    
+    <title>Dashboard - 6 Sistemas</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         
-        :root {
-            --bg: #0c0c0f;
-            --surface: rgba(17, 17, 22, 0.75);
-            --card: rgba(22, 22, 29, 0.78);
-            --border: rgba(34, 34, 48, 0.5);
-            --red: #e5323f;
-            --text: #b8bcc8;
-            --text-bright: #eceef5;
-            --mono: 'JetBrains Mono', monospace;
-            --head: 'Oxanium', sans-serif;
-        }
-
-        [data-theme="light"] {
-            --bg: #f2f2f5;
-            --surface: rgba(255, 255, 255, 0.78);
-            --card: rgba(255, 255, 255, 0.82);
-            --border: rgba(200, 200, 210, 0.6);
-            --red: #d1202f;
-            --text: #40414d;
-            --text-bright: #16161d;
-        }
-
-        html, body { height: 100%; }
         body {
-            background: var(--bg);
-            color: var(--text);
-            font-family: var(--mono);
+            font-family: Arial, sans-serif;
+            background: #1a1a1a;
+            color: #fff;
+            height: 100vh;
             overflow: hidden;
-            transition: background .3s ease, color .3s ease;
         }
 
         .container {
             display: flex;
             height: 100vh;
-            gap: 0;
         }
 
-        /* SIDEBAR */
         .sidebar {
-            width: 280px;
-            background: var(--surface);
-            border-right: 1px solid var(--border);
-            display: flex;
-            flex-direction: column;
-            transition: all 0.3s ease;
+            width: 250px;
+            background: #111;
+            border-right: 2px solid #333;
             overflow-y: auto;
-            z-index: 100;
+            padding: 20px 0;
         }
 
-        .sidebar-header {
+        .sidebar h2 {
             padding: 20px;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .sidebar-header h2 {
             font-size: 16px;
-            font-weight: 700;
-            color: var(--text-bright);
-            font-family: var(--head);
-        }
-
-        .sidebar-buttons {
-            flex: 1;
-            padding: 16px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            overflow-y: auto;
+            border-bottom: 2px solid #333;
+            margin-bottom: 10px;
         }
 
         .btn-system {
-            padding: 12px 14px;
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            color: var(--text);
+            display: block;
+            width: 100%;
+            padding: 15px 20px;
+            margin: 5px 0;
+            background: #222;
+            border: 1px solid #333;
+            color: #ccc;
             cursor: pointer;
-            font-family: var(--mono);
-            font-size: 11px;
-            font-weight: 600;
+            font-size: 13px;
             text-align: left;
-            transition: all .2s ease;
+            transition: all 0.3s;
+            font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
+            letter-spacing: 0.5px;
         }
 
         .btn-system:hover {
-            background: rgba(229, 50, 63, 0.15);
-            border-color: var(--red);
-            color: var(--red);
+            background: #ff3333;
+            color: #fff;
+            border-color: #ff3333;
         }
 
         .btn-system.active {
-            background: rgba(229, 50, 63, 0.25);
-            border-color: var(--red);
-            color: var(--red);
-            box-shadow: 0 0 12px rgba(229, 50, 63, 0.3);
+            background: #ff3333;
+            color: #fff;
+            border-color: #ff3333;
+            box-shadow: 0 0 10px rgba(255, 51, 51, 0.5);
         }
 
-        /* MAIN CONTENT */
-        .main-content {
+        .content {
             flex: 1;
             display: flex;
             flex-direction: column;
-            overflow: hidden;
+            background: #0a0a0a;
         }
 
         .header {
-            padding: 16px 20px;
-            background: var(--surface);
-            border-bottom: 1px solid var(--border);
+            background: #1a1a1a;
+            border-bottom: 2px solid #333;
+            padding: 15px 30px;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
-        .header-title {
+        .header h1 {
             font-size: 18px;
             font-weight: 700;
-            color: var(--text-bright);
-            font-family: var(--head);
         }
 
         .theme-toggle {
-            background: var(--card);
-            border: 1px solid var(--border);
-            padding: 6px 12px;
-            border-radius: 6px;
-            color: var(--text);
+            background: #333;
+            border: 1px solid #555;
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: 4px;
             cursor: pointer;
-            font-size: 14px;
-            transition: all .2s ease;
+            font-size: 12px;
         }
 
         .theme-toggle:hover {
-            border-color: var(--red);
-            color: var(--red);
+            background: #444;
         }
 
-        /* CONTENT AREA */
-        .content-area {
+        .iframe-container {
             flex: 1;
-            overflow: auto;
-            padding: 0;
-            background: var(--bg);
+            overflow: hidden;
+            position: relative;
         }
 
-        .system-content {
-            display: none;
+        .system-iframe {
+            width: 100%;
             height: 100%;
-            padding: 20px;
-            overflow-y: auto;
+            border: none;
+            display: none;
         }
 
-        .system-content.active {
+        .system-iframe.active {
             display: block;
         }
 
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: var(--bg); }
-        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #1a1a1a;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #444;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #666;
+        }
 
         @media (max-width: 768px) {
             .sidebar {
-                position: fixed;
-                left: 0;
-                top: 0;
-                height: 100vh;
-                z-index: 1000;
-                transform: translateX(-100%);
-                transition: transform 0.3s ease;
+                width: 60px;
             }
-
-            .sidebar.open {
-                transform: translateX(0);
-            }
-
-            .container.sidebar-open .sidebar {
-                transform: translateX(0);
-            }
-
             .btn-system {
+                padding: 15px 8px;
                 font-size: 10px;
-                padding: 10px 12px;
+            }
+            .sidebar h2 {
+                font-size: 12px;
+                padding: 10px;
             }
         }
     </style>
@@ -207,80 +153,34 @@
 <body>
 
 <div class="container">
-    <!-- SIDEBAR GAVETA LATERAL -->
     <div class="sidebar">
-        <div class="sidebar-header">
-            <h2>📊 Sistemas</h2>
-        </div>
-        <div class="sidebar-buttons">
-            <button class="btn-system active" data-system="1">1. Fiber Drop<br>Analyzer</button>
-            <button class="btn-system" data-system="2">2. Análise ONU<br>MAC</button>
-            <button class="btn-system" data-system="3">3. Ordens de<br>Serviço</button>
-            <button class="btn-system" data-system="4">4. Clientes<br>Offline</button>
-            <button class="btn-system" data-system="5">5. Analisador<br>OS 2.0</button>
-            <button class="btn-system" data-system="6">6. Atendimentos<br>SilverNet</button>
-        </div>
+        <h2>📊 SISTEMAS</h2>
+        <button class="btn-system active" data-id="1">1. Fiber Drop Analyzer</button>
+        <button class="btn-system" data-id="2">2. Análise ONU MAC</button>
+        <button class="btn-system" data-id="3">3. Ordens Serviço</button>
+        <button class="btn-system" data-id="4">4. Clientes Offline</button>
+        <button class="btn-system" data-id="5">5. Analisador OS 2.0</button>
+        <button class="btn-system" data-id="6">6. Atendimentos</button>
     </div>
 
-    <!-- CONTEÚDO PRINCIPAL -->
-    <div class="main-content">
+    <div class="content">
         <div class="header">
-            <div class="header-title" id="systemTitle">Sistema 1 - Fiber Drop Analyzer</div>
+            <h1 id="pageTitle">Sistema 1 - Fiber Drop Analyzer</h1>
             <button class="theme-toggle" id="themeToggle">🌙 Tema</button>
         </div>
 
-        <div class="content-area" id="contentArea">
-            <!-- SISTEMA 1 -->
-            <div class="system-content active" id="system1" data-system="1"></div>
-            <!-- SISTEMA 2 -->
-            <div class="system-content" id="system2" data-system="2"></div>
-            <!-- SISTEMA 3 -->
-            <div class="system-content" id="system3" data-system="3"></div>
-            <!-- SISTEMA 4 -->
-            <div class="system-content" id="system4" data-system="4"></div>
-            <!-- SISTEMA 5 -->
-            <div class="system-content" id="system5" data-system="5"></div>
-            <!-- SISTEMA 6 -->
-            <div class="system-content" id="system6" data-system="6"></div>
+        <div class="iframe-container">
+            <iframe id="frame1" class="system-iframe active" src="about:blank"></iframe>
+            <iframe id="frame2" class="system-iframe" src="about:blank"></iframe>
+            <iframe id="frame3" class="system-iframe" src="about:blank"></iframe>
+            <iframe id="frame4" class="system-iframe" src="about:blank"></iframe>
+            <iframe id="frame5" class="system-iframe" src="about:blank"></iframe>
+            <iframe id="frame6" class="system-iframe" src="about:blank"></iframe>
         </div>
     </div>
 </div>
 
 <script>
-    // TEMA
-    const THEME_KEY = "dashboardTheme";
-    function applyTheme(theme) {
-        if (theme === "light") {
-            document.documentElement.setAttribute("data-theme", "light");
-            document.getElementById("themeToggle").textContent = "☀️ Tema";
-        } else {
-            document.documentElement.removeAttribute("data-theme");
-            document.getElementById("themeToggle").textContent = "🌙 Tema";
-        }
-    }
-
-    function initTheme() {
-        let saved = null;
-        try { saved = localStorage.getItem(THEME_KEY); } catch (e) {}
-        if (!saved) {
-            saved = window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
-        }
-        applyTheme(saved);
-    }
-
-    document.getElementById("themeToggle").addEventListener("click", () => {
-        const isLight = document.documentElement.getAttribute("data-theme") === "light";
-        const next = isLight ? "dark" : "light";
-        applyTheme(next);
-        try { localStorage.setItem(THEME_KEY, next); } catch (e) {}
-    });
-
-    initTheme();
-
-    // NAVEGAÇÃO
-    const systemBtns = document.querySelectorAll(".btn-system");
-    const systemContents = document.querySelectorAll(".system-content");
-    const systemTitle = document.getElementById("systemTitle");
     const titles = {
         1: "Sistema 1 - Fiber Drop Analyzer",
         2: "Sistema 2 - Análise ONU MAC",
@@ -290,235 +190,63 @@
         6: "Sistema 6 - Análise de Atendimentos"
     };
 
-    systemBtns.forEach(btn => {
+    const urls = {
+        1: "https://cdn.jsdelivr.net/gh/j03lf4r14sd4s1lv4/Fiber-Drop-Analyzer-5.1@76a33191c91c77f2877945836bc688a01272602b/index.html",
+        2: "https://cdn.jsdelivr.net/gh/j03lf4r14sd4s1lv4/ANALIS-IXC-EQUIP-ONU-MAC@043f24b169f586b03ac11f9d593ddc47e86f7f5e/index.html",
+        3: "https://cdn.jsdelivr.net/gh/j03lf4r14sd4s1lv4/Ordens-de-servico-com-filtros-e-agrupamento@c45e2b63f55fc70205efd17ee899d7aac19823f8/index.html",
+        4: "https://cdn.jsdelivr.net/gh/j03lf4r14sd4s1lv4/Analise-de-Clientes-Offline@c98df5f6e4b202b9f23051e44da69d0539e2da3e/index.html",
+        5: "https://cdn.jsdelivr.net/gh/j03lf4r14sd4s1lv4/-Analisador-de-Ordens-de-Servico-2.0@a5a2a5c5b9abd8e6c57a02e4e636a24718919d99/index.html",
+        6: "https://cdn.jsdelivr.net/gh/j03lf4r14sd4s1lv4/Analise-de-Atendimentos@1ffb401761634295228d6f5e55a39dfe9eab4c06/index.html"
+    };
+
+    const btns = document.querySelectorAll(".btn-system");
+    const frames = document.querySelectorAll(".system-iframe");
+    const pageTitle = document.getElementById("pageTitle");
+    let loadedFrames = {};
+
+    btns.forEach(btn => {
         btn.addEventListener("click", () => {
-            const system = btn.getAttribute("data-system");
-            systemBtns.forEach(b => b.classList.remove("active"));
-            systemContents.forEach(c => c.classList.remove("active"));
+            const id = btn.getAttribute("data-id");
+            
+            btns.forEach(b => b.classList.remove("active"));
+            frames.forEach(f => f.classList.remove("active"));
+            
             btn.classList.add("active");
-            document.getElementById(`system${system}`).classList.add("active");
-            systemTitle.textContent = titles[system];
+            document.getElementById(`frame${id}`).classList.add("active");
+            pageTitle.textContent = titles[id];
+
+            // Carregar iframe pela primeira vez
+            const frame = document.getElementById(`frame${id}`);
+            if (!loadedFrames[id]) {
+                frame.src = urls[id];
+                loadedFrames[id] = true;
+            }
         });
     });
 
-    // CARREGAR SISTEMAS
-    function loadSystem(systemNum, htmlContent) {
-        const container = document.getElementById(`system${systemNum}`);
-        container.innerHTML = htmlContent;
-    }
+    // Carregar primeiro sistema automaticamente
+    document.getElementById("frame1").src = urls[1];
+    loadedFrames[1] = true;
 
-    // SISTEMA 1: Fiber Drop Analyzer
-    loadSystem(1, \`<div style="font-family: 'JetBrains Mono', monospace; color: var(--text); height: 100%; overflow: auto;">
-        <style>
-            .container { max-width: 1480px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; height: 100%; }
-            .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 24px; }
-            .section-title { font-family: 'Oxanium', sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text); margin-bottom: 18px; }
-            .section-title::before { content: ''; display: inline-block; width: 3px; height: 14px; background: var(--red); border-radius: 2px; margin-right: 10px; }
-            .upload-zone { border: 1.5px dashed var(--border); border-radius: 10px; padding: 44px 32px; text-align: center; cursor: pointer; background: var(--surface); transition: all .3s; }
-            .upload-zone:hover { border-color: var(--red); background: rgba(229,50,63,0.08); }
-            .upload-icon { font-size: 36px; margin-bottom: 14px; }
-            .upload-btn { display: inline-block; margin-top: 18px; padding: 9px 26px; background: rgba(229,50,63,0.15); border: 1px solid var(--red); border-radius: 7px; color: var(--red); cursor: pointer; font-weight: 600; text-transform: uppercase; }
-            .upload-btn:hover { background: rgba(229,50,63,0.25); }
-            .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; }
-            .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px; }
-            .stat-label { font-size: 10px; text-transform: uppercase; color: var(--text); margin-bottom: 10px; }
-            .stat-value { font-family: 'Oxanium', sans-serif; font-size: 38px; font-weight: 800; color: var(--text-bright); }
-            input[type="file"] { display: none; }
-        </style>
-        <div class="container">
-            <div class="card">
-                <div class="section-title">Importar Dados</div>
-                <div class="upload-zone" id="uploadZone1">
-                    <span class="upload-icon">⬆</span>
-                    <div style="font-weight: 600; color: var(--text-bright);">Arraste o arquivo aqui</div>
-                    <div style="font-size: 11px; color: var(--text);">Formatos aceitos: .xlsx · .csv</div>
-                    <label for="fileInput1" class="upload-btn">Selecionar arquivo</label>
-                    <input type="file" id="fileInput1" accept=".xlsx,.csv">
-                </div>
-            </div>
-            <div class="card">
-                <div class="section-title">Resumo da Análise</div>
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-label">Quedas detectadas</div>
-                        <div class="stat-value" id="stat1-quedas">—</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-label">Clientes afetados</div>
-                        <div class="stat-value" id="stat1-clientes">—</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-label">OLTs afetadas</div>
-                        <div class="stat-value" id="stat1-olts">—</div>
-                    </div>
-                </div>
-            </div>
-            <div class="card" style="flex: 1; overflow: auto;">
-                <div id="results1" style="text-align: center; padding: 40px; color: var(--text);">Carregue um arquivo para começar</div>
-            </div>
-        </div>
-    \`);
-
-    // SISTEMA 2: ONU MAC
-    loadSystem(2, \`<div style="font-family: 'Segoe UI', sans-serif; color: #1a2a3a; height: 100%; overflow: auto;">
-        <style>
-            .container { max-width: 1400px; width: 100%; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); margin: 10px auto; }
-            .upload-area { background: #f0f4fe; border: 2px dashed #b3c7e5; border-radius: 10px; padding: 25px; text-align: center; cursor: pointer; transition: 0.2s; }
-            .upload-area:hover { background: #e6edfc; border-color: #7a9bcb; }
-            .upload-label { display: inline-block; background: #1a2b4a; color: white; padding: 10px 25px; border-radius: 6px; font-weight: 500; cursor: pointer; }
-            .upload-label:hover { background: #2c406a; }
-            input[type="file"] { display: none; }
-        </style>
-        <div class="container">
-            <h1>📊 Análise de Clientes - OLT</h1>
-            <p style="font-size: 14px; color: #64748b; margin-bottom: 20px;">Filtro ONU MAC por prefixo (4 caracteres)</p>
-            <div class="upload-area" id="uploadArea2">
-                <p style="margin: 0 0 12px 0; color: #1a2a3a; font-weight: 500;">📂 Arraste ou clique para carregar (CSV, JSON, XLSX)</p>
-                <input type="file" id="fileInput2" accept=".csv,.json,.xlsx,.xls">
-                <label for="fileInput2" class="upload-label">Escolher arquivo</label>
-                <p style="margin: 10px 0 0 0; font-size: 0.85rem; color: #5e6f8d;">Colunas reconhecidas: Transmissor (OLT), Caixa de atendimento (MEC), Plano, Cliente, Login, Status, ONU MAC.</p>
-            </div>
-            <div id="results2" style="margin-top: 20px; color: #64748b; text-align: center; padding: 40px;">Carregue um arquivo para começar</div>
-        </div>
-    \`);
-
-    // SISTEMA 3: Ordens de Serviço
-    loadSystem(3, \`<div style="font-family: 'Inter', sans-serif; color: #1e293b; height: 100%; overflow: auto;">
-        <style>
-            .container { max-width: 1440px; margin: 0 auto; }
-            .page-title { font-size: 28px; font-weight: 700; display: flex; align-items: center; gap: 12px; margin-bottom: 6px; }
-            .page-sub { color: #64748b; font-size: 15px; margin-bottom: 28px; }
-            .upload-zone { border: 2px dashed #cbd5e1; border-radius: 16px; padding: 48px 32px; text-align: center; background: #ffffff; transition: border-color 0.25s; cursor: pointer; margin-bottom: 32px; }
-            .upload-zone:hover { border-color: #94a3b8; background: #fafcff; }
-            .upload-zone .icon { font-size: 48px; color: #94a3b8; margin-bottom: 16px; }
-            .upload-zone input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
-            input[type="file"] { display: none; }
-        </style>
-        <div class="container" style="padding: 24px;">
-            <div class="page-title">
-                <i class="fas fa-clipboard-list"></i>
-                Análise de Ordens de Serviço
-            </div>
-            <div class="page-sub">
-                <span>Carregue um arquivo CSV para começar a análise</span>
-            </div>
-            <div class="upload-zone" id="uploadZone3">
-                <div class="icon"><i class="fas fa-cloud-upload-alt"></i></div>
-                <h3>Arraste seu CSV aqui ou clique para selecionar</h3>
-                <p>Formatos aceitos: .csv (exportado do Excel / IXC)</p>
-                <div style="font-size: 13px; color: #64748b;"><i class="fas fa-info-circle"></i> Separador: ponto e vírgula · Campos entre aspas</div>
-                <input type="file" id="fileInput3" accept=".csv" />
-                <div class="file-name" id="fileName3" style="display:none;"></div>
-            </div>
-            <div id="results3" style="text-align: center; padding: 40px; color: #64748b;">Carregue um arquivo para começar</div>
-        </div>
-    \`);
-
-    // SISTEMA 4: Clientes Offline
-    loadSystem(4, \`<div style="font-family: 'Segoe UI', sans-serif; color: #1e293b; height: 100%; overflow: auto;">
-        <style>
-            .container { max-width: 1400px; margin: 0 auto; background: #fff; border-radius: 16px; padding: 30px; }
-            h1 { font-size: 28px; margin-bottom: 8px; display: flex; align-items: center; gap: 10px; }
-            .upload-area { background: #f8fafc; border: 2px dashed #cbd5e1; border-radius: 12px; padding: 30px 20px; text-align: center; margin: 20px 0 30px; }
-            .upload-area:hover { border-color: #3b82f6; background: #f1f5f9; }
-            .upload-area input[type="file"] { display: none; }
-            .upload-area label { cursor: pointer; font-weight: 600; color: #3b82f6; padding: 10px 24px; border-radius: 8px; background: #e0f2fe; display: inline-block; }
-            .upload-area label:hover { background: #bae6fd; }
-            input[type="file"] { display: none; }
-            .btn-analyze { background: #2563eb; color: #fff; border: none; padding: 12px 40px; border-radius: 8px; font-size: 18px; font-weight: 600; cursor: pointer; margin-top: 10px; }
-            .btn-analyze:hover { background: #1d4ed8; }
-        </style>
-        <div class="container">
-            <h1>📊 Análise de Clientes Offline <small style="font-size: 16px; font-weight: normal; color: #64748b;">com filtros avançados</small></h1>
-            <div class="upload-area">
-                <label for="file-input4">📂 Selecione o arquivo .xlsx</label>
-                <input type="file" id="file-input4" accept=".xlsx,.xls">
-                <div id="file-name4" style="margin-top: 10px; font-size: 14px; color: #475569;">Nenhum arquivo selecionado</div>
-                <button class="btn-analyze" id="btn-analyze4" disabled>🔍 Analisar</button>
-            </div>
-            <div id="results4" style="text-align: center; padding: 40px; color: #64748b;">Carregue um arquivo para começar</div>
-        </div>
-    \`);
-
-    // SISTEMA 5: Analisador OS 2.0
-    loadSystem(5, \`<div style="height: 100%; overflow: auto;">
-        <div style="max-width: 100%; margin: 0 auto; background: rgba(255, 255, 255, 0.70); padding: 20px 25px; border-radius: 12px; margin: 10px;">
-            <h1 style="color: #1a2a3a; font-size: 1.6rem; display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
-                📊 Analisador de Ordens de Serviço
-            </h1>
-            <div style="border: 2px dashed #cbd5e1; border-radius: 16px; padding: 48px 32px; text-align: center; background: #ffffff; cursor: pointer; margin-bottom: 32px;" id="uploadZone5">
-                <div style="font-size: 48px; color: #94a3b8; margin-bottom: 16px;"><i class="fas fa-cloud-upload-alt"></i></div>
-                <h3 style="font-weight: 600; font-size: 18px; margin-bottom: 6px;">Arraste seu CSV aqui ou clique para selecionar</h3>
-                <p style="color: #64748b; font-size: 14px;">Formatos aceitos: .csv (exportado do Excel / IXC)</p>
-                <input type="file" id="fileInput5" accept=".csv" style="display: none;">
-                <label for="fileInput5" style="display: inline-block; background: #0f172a; color: white; padding: 10px 25px; border-radius: 6px; font-weight: 500; cursor: pointer; margin-top: 15px;">Selecionar arquivo</label>
-                <div id="fileInfo5" style="margin-top: 10px; font-size: 13px; color: #64748b;"></div>
-            </div>
-            <div id="results5" style="text-align: center; padding: 40px; color: #64748b;">Carregue um arquivo para começar</div>
-        </div>
-    \`);
-
-    // SISTEMA 6: Atendimentos
-    loadSystem(6, \`<div style="font-family: 'Segoe UI', sans-serif; color: #1e293b; height: 100%; overflow: auto;">
-        <style>
-            .container { max-width: 1400px; margin: 0 auto; background: rgba(255, 255, 255, 0.75); padding: 24px; border-radius: 16px; }
-            h1 { font-size: 24px; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
-            .upload-area { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; margin: 20px 0 24px; padding: 16px 20px; background: rgba(248, 250, 252, 0.6); border-radius: 12px; border: 1px dashed rgba(148, 163, 184, 0.5); }
-            .upload-area input[type="file"] { flex: 1; min-width: 200px; }
-            .upload-area button { background: #0f172a; color: white; border: none; padding: 8px 24px; border-radius: 8px; font-weight: 600; cursor: pointer; }
-            .upload-area button:hover { background: #1e293b; }
-            input[type="file"] { display: none; }
-        </style>
-        <div class="container">
-            <h1>
-                📋 Análise de Atendimentos
-                <small style="font-size: 14px; font-weight: 400; color: #64748b;">SilverNet</small>
-            </h1>
-            <div class="upload-area" id="uploadArea6">
-                <span style="font-weight:500;">Carregar arquivo CSV:</span>
-                <input type="file" id="fileInput6" accept=".csv">
-                <button id="loadBtn6">Carregar</button>
-                <button id="pdfBtn6">📄 Baixar PDF</button>
-                <span style="font-size:13px; color:#64748b;">(separador: ponto e vírgula)</span>
-            </div>
-            <div id="results6" style="text-align: center; padding: 40px; color: #64748b;">Carregue um arquivo para começar</div>
-        </div>
-    \`);
-
-    // EVENT LISTENERS BÁSICOS
-    document.getElementById("fileInput1").addEventListener("change", (e) => {
-        if (e.target.files[0]) {
-            const reader = new FileReader();
-            reader.onload = (event) => {
-                try {
-                    const data = new Uint8Array(event.target.result);
-                    const wb = XLSX.read(data, { type: "array" });
-                    const sh = wb.Sheets[wb.SheetNames[0]];
-                    const json = XLSX.utils.sheet_to_json(sh, { defval: "" });
-                    document.getElementById("stat1-quedas").textContent = json.length;
-                    document.getElementById("stat1-clientes").textContent = new Set(json.map(r => r.Cliente || '')).size;
-                    document.getElementById("stat1-olts").textContent = new Set(json.map(r => r.OLT || '')).size;
-                    document.getElementById("results1").innerHTML = \`<div style="color: #34d399;">✅ \${json.length} registros carregados com sucesso</div>\`;
-                } catch (e) {
-                    document.getElementById("results1").innerHTML = \`<div style="color: #e5323f;">❌ Erro ao carregar: \${e.message}</div>\`;
-                }
-            };
-            reader.readAsArrayBuffer(e.target.files[0]);
+    // Tema
+    document.getElementById("themeToggle").addEventListener("click", () => {
+        const isDark = document.body.style.background === "rgb(10, 10, 10)" || document.body.style.background === "";
+        if (isDark) {
+            document.body.style.background = "#f5f5f5";
+            document.body.style.color = "#000";
+            document.querySelector(".sidebar").style.background = "#e0e0e0";
+            document.querySelector(".sidebar").style.borderColor = "#ccc";
+            document.querySelector(".header").style.background = "#f5f5f5";
+            document.querySelector(".header").style.borderColor = "#ccc";
+        } else {
+            document.body.style.background = "#0a0a0a";
+            document.body.style.color = "#fff";
+            document.querySelector(".sidebar").style.background = "#111";
+            document.querySelector(".sidebar").style.borderColor = "#333";
+            document.querySelector(".header").style.background = "#1a1a1a";
+            document.querySelector(".header").style.borderColor = "#333";
         }
     });
-
-    [2, 3, 4, 5, 6].forEach(i => {
-        const input = document.getElementById(\`fileInput\${i}\`);
-        if (input) {
-            input.addEventListener("change", (e) => {
-                if (e.target.files[0]) {
-                    document.getElementById(\`results\${i}\`).innerHTML = \`<div style="color: #34d399;">✅ Arquivo "\${e.target.files[0].name}" carregado<br><small>Sistema \${i} - Preparado para análise</small></div>\`;
-                }
-            });
-        }
-    });
-
-    console.log("Dashboard com 6 sistemas carregado com sucesso!");
 </script>
 
 </body>

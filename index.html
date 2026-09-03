@@ -6,7 +6,10 @@
     <title>Dashboard - 6 Sistemas de Análise</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         
@@ -47,7 +50,7 @@
             gap: 0;
         }
 
-        /* SIDEBAR GAVETA */
+        /* SIDEBAR */
         .sidebar {
             width: 280px;
             background: var(--surface);
@@ -74,19 +77,6 @@
             font-family: var(--head);
         }
 
-        .toggle-sidebar {
-            background: none;
-            border: none;
-            color: var(--text);
-            cursor: pointer;
-            font-size: 18px;
-            padding: 4px;
-        }
-
-        .toggle-sidebar:hover {
-            color: var(--red);
-        }
-
         .sidebar-buttons {
             flex: 1;
             padding: 16px;
@@ -97,14 +87,14 @@
         }
 
         .btn-system {
-            padding: 12px 16px;
+            padding: 12px 14px;
             background: var(--card);
             border: 1px solid var(--border);
             border-radius: 8px;
             color: var(--text);
             cursor: pointer;
             font-family: var(--mono);
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 600;
             text-align: left;
             transition: all .2s ease;
@@ -181,137 +171,12 @@
         }
 
         .system-content.active {
-            display: flex;
-            flex-direction: column;
+            display: block;
         }
 
-        /* Estilos para cada sistema */
-        .upload-zone {
-            border: 1.5px dashed var(--border);
-            border-radius: 10px;
-            padding: 30px;
-            text-align: center;
-            cursor: pointer;
-            background: var(--surface);
-            transition: all .3s ease;
-            margin-bottom: 20px;
-        }
-
-        .upload-zone:hover {
-            border-color: var(--red);
-            background: rgba(229, 50, 63, 0.08);
-        }
-
-        .upload-zone input[type="file"] { display: none; }
-
-        .upload-btn {
-            display: inline-block;
-            margin-top: 12px;
-            padding: 8px 20px;
-            background: rgba(229, 50, 63, 0.15);
-            border: 1px solid var(--red);
-            border-radius: 6px;
-            color: var(--red);
-            font-family: var(--mono);
-            font-size: 11px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all .2s ease;
-            text-transform: uppercase;
-        }
-
-        .upload-btn:hover {
-            background: rgba(229, 50, 63, 0.25);
-            box-shadow: 0 0 12px rgba(229, 50, 63, 0.3);
-        }
-
-        .card {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 16px;
-        }
-
-        .section-title {
-            font-family: var(--head);
-            font-size: 11px;
-            font-weight: 600;
-            letter-spacing: 0.18em;
-            text-transform: uppercase;
-            color: var(--text);
-            margin-bottom: 16px;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-            gap: 12px;
-            margin-bottom: 20px;
-        }
-
-        .stat-card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 16px;
-        }
-
-        .stat-label {
-            font-size: 10px;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: var(--text);
-            margin-bottom: 8px;
-        }
-
-        .stat-value {
-            font-family: var(--head);
-            font-size: 32px;
-            font-weight: 800;
-            color: var(--text-bright);
-        }
-
-        .table-wrapper {
-            overflow-x: auto;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            flex: 1;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 12px;
-        }
-
-        th {
-            background: var(--surface);
-            padding: 10px;
-            text-align: left;
-            font-weight: 600;
-            border-bottom: 1px solid var(--border);
-            color: var(--text-bright);
-            position: sticky;
-            top: 0;
-        }
-
-        td {
-            padding: 8px 10px;
-            border-bottom: 1px solid var(--border);
-            color: var(--text);
-        }
-
-        tr:hover td {
-            background: rgba(229, 50, 63, 0.05);
-        }
-
-        /* RESPONSIVE */
-        @media (max-width: 1024px) {
-            .sidebar {
-                width: 240px;
-            }
-        }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 
         @media (max-width: 768px) {
             .sidebar {
@@ -332,27 +197,11 @@
                 transform: translateX(0);
             }
 
-            .toggle-sidebar {
-                display: flex;
-            }
-
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
+            .btn-system {
+                font-size: 10px;
+                padding: 10px 12px;
             }
         }
-
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: var(--bg); }
-        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-
-        .loading {
-            display: none;
-            text-align: center;
-            padding: 20px;
-            color: var(--text);
-        }
-
-        .loading.active { display: block; }
     </style>
 </head>
 <body>
@@ -362,7 +211,6 @@
     <div class="sidebar">
         <div class="sidebar-header">
             <h2>📊 Sistemas</h2>
-            <button class="toggle-sidebar" id="toggleBtn">✕</button>
         </div>
         <div class="sidebar-buttons">
             <button class="btn-system active" data-system="1">1. Fiber Drop<br>Analyzer</button>
@@ -377,137 +225,30 @@
     <!-- CONTEÚDO PRINCIPAL -->
     <div class="main-content">
         <div class="header">
-            <div class="header-title">Sistema Integrado de Análise</div>
+            <div class="header-title" id="systemTitle">Sistema 1 - Fiber Drop Analyzer</div>
             <button class="theme-toggle" id="themeToggle">🌙 Tema</button>
         </div>
 
-        <div class="content-area">
-            <!-- SISTEMA 1: FIBER DROP ANALYZER -->
-            <div class="system-content active" data-system="1">
-                <div class="card">
-                    <div class="section-title">▸ Importar Dados</div>
-                    <div class="upload-zone" id="uploadZone1">
-                        <span style="font-size: 24px; display: block; margin-bottom: 10px;">⬆</span>
-                        <div style="font-weight: 600; color: var(--text-bright); margin-bottom: 4px;">Arraste aqui ou clique</div>
-                        <div style="font-size: 11px; color: var(--text);">Formatos: .xlsx · .csv</div>
-                        <label for="fileInput1" class="upload-btn">Selecionar</label>
-                        <input type="file" id="fileInput1" accept=".xlsx,.csv">
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="section-title">▸ Resumo da Análise</div>
-                    <div class="stats-grid">
-                        <div class="stat-card">
-                            <div class="stat-label">Quedas Detectadas</div>
-                            <div class="stat-value" id="stat1-quedas">—</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-label">Clientes Afetados</div>
-                            <div class="stat-value" id="stat1-clientes">—</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-label">OLTs Afetadas</div>
-                            <div class="stat-value" id="stat1-olts">—</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="card" style="flex: 1; overflow: auto;">
-                    <div class="section-title">▸ Resultado por Região</div>
-                    <div id="results1" style="color: var(--text); text-align: center; padding: 40px;">Carregue um arquivo para começar</div>
-                </div>
-            </div>
-
-            <!-- SISTEMA 2: ANÁLISE ONU MAC -->
-            <div class="system-content" data-system="2">
-                <div class="card">
-                    <div class="section-title">▸ Importar Dados ONU MAC</div>
-                    <div class="upload-zone" id="uploadZone2">
-                        <span style="font-size: 24px; display: block; margin-bottom: 10px;">📂</span>
-                        <div style="font-weight: 600; color: var(--text-bright); margin-bottom: 4px;">Carregue seu arquivo</div>
-                        <div style="font-size: 11px; color: var(--text);">CSV, JSON, XLSX</div>
-                        <label for="fileInput2" class="upload-btn">Escolher arquivo</label>
-                        <input type="file" id="fileInput2" accept=".csv,.json,.xlsx,.xls">
-                    </div>
-                </div>
-                <div class="card" style="flex: 1; overflow: auto;">
-                    <div id="results2" style="color: var(--text); text-align: center; padding: 40px;">Carregue um arquivo para começar</div>
-                </div>
-            </div>
-
-            <!-- SISTEMA 3: ORDENS DE SERVIÇO -->
-            <div class="system-content" data-system="3">
-                <div class="card">
-                    <div class="section-title">▸ Importar Ordens de Serviço</div>
-                    <div class="upload-zone" id="uploadZone3">
-                        <span style="font-size: 24px; display: block; margin-bottom: 10px;">📋</span>
-                        <div style="font-weight: 600; color: var(--text-bright); margin-bottom: 4px;">Arraste seu CSV aqui</div>
-                        <div style="font-size: 11px; color: var(--text);">Separador: ponto e vírgula</div>
-                        <label for="fileInput3" class="upload-btn">Selecionar arquivo</label>
-                        <input type="file" id="fileInput3" accept=".csv">
-                    </div>
-                </div>
-                <div class="card" style="flex: 1; overflow: auto;">
-                    <div id="results3" style="color: var(--text); text-align: center; padding: 40px;">Carregue um arquivo para começar</div>
-                </div>
-            </div>
-
-            <!-- SISTEMA 4: CLIENTES OFFLINE -->
-            <div class="system-content" data-system="4">
-                <div class="card">
-                    <div class="section-title">▸ Importar Dados Clientes</div>
-                    <div class="upload-zone" id="uploadZone4">
-                        <span style="font-size: 24px; display: block; margin-bottom: 10px;">🔴</span>
-                        <div style="font-weight: 600; color: var(--text-bright); margin-bottom: 4px;">Selecione o arquivo .xlsx</div>
-                        <div style="font-size: 11px; color: var(--text);">Processamento local - sem envio de dados</div>
-                        <label for="fileInput4" class="upload-btn">Escolher arquivo</label>
-                        <input type="file" id="fileInput4" accept=".xlsx,.xls">
-                    </div>
-                </div>
-                <div class="card" style="flex: 1; overflow: auto;">
-                    <div id="results4" style="color: var(--text); text-align: center; padding: 40px;">Carregue um arquivo para começar</div>
-                </div>
-            </div>
-
-            <!-- SISTEMA 5: ANALISADOR OS 2.0 -->
-            <div class="system-content" data-system="5">
-                <div class="card">
-                    <div class="section-title">▸ Importar Ordens 2.0</div>
-                    <div class="upload-zone" id="uploadZone5">
-                        <span style="font-size: 24px; display: block; margin-bottom: 10px;">📁</span>
-                        <div style="font-weight: 600; color: var(--text-bright); margin-bottom: 4px;">Carregue seu arquivo CSV ou XLSX</div>
-                        <label for="fileInput5" class="upload-btn">Selecionar arquivo</label>
-                        <input type="file" id="fileInput5" accept=".csv,.xlsx,.xls">
-                    </div>
-                </div>
-                <div class="card" style="flex: 1; overflow: auto;">
-                    <div id="results5" style="color: var(--text); text-align: center; padding: 40px;">Carregue um arquivo para começar</div>
-                </div>
-            </div>
-
-            <!-- SISTEMA 6: ANÁLISE DE ATENDIMENTOS -->
-            <div class="system-content" data-system="6">
-                <div class="card">
-                    <div class="section-title">▸ Importar Atendimentos</div>
-                    <div class="upload-zone" id="uploadZone6">
-                        <span style="font-size: 24px; display: block; margin-bottom: 10px;">📞</span>
-                        <div style="font-weight: 600; color: var(--text-bright); margin-bottom: 4px;">Carregar arquivo CSV</div>
-                        <div style="font-size: 11px; color: var(--text);">Separador: ponto e vírgula</div>
-                        <label for="fileInput6" class="upload-btn">Carregar</label>
-                        <input type="file" id="fileInput6" accept=".csv">
-                    </div>
-                </div>
-                <div class="card" style="flex: 1; overflow: auto;">
-                    <div id="results6" style="color: var(--text); text-align: center; padding: 40px;">Carregue um arquivo para começar</div>
-                </div>
-            </div>
+        <div class="content-area" id="contentArea">
+            <!-- SISTEMA 1 -->
+            <div class="system-content active" id="system1" data-system="1"></div>
+            <!-- SISTEMA 2 -->
+            <div class="system-content" id="system2" data-system="2"></div>
+            <!-- SISTEMA 3 -->
+            <div class="system-content" id="system3" data-system="3"></div>
+            <!-- SISTEMA 4 -->
+            <div class="system-content" id="system4" data-system="4"></div>
+            <!-- SISTEMA 5 -->
+            <div class="system-content" id="system5" data-system="5"></div>
+            <!-- SISTEMA 6 -->
+            <div class="system-content" id="system6" data-system="6"></div>
         </div>
     </div>
 </div>
 
 <script>
-    // ========== TEMA ==========
+    // TEMA
     const THEME_KEY = "dashboardTheme";
-    
     function applyTheme(theme) {
         if (theme === "light") {
             document.documentElement.setAttribute("data-theme", "light");
@@ -522,8 +263,7 @@
         let saved = null;
         try { saved = localStorage.getItem(THEME_KEY); } catch (e) {}
         if (!saved) {
-            saved = window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches
-                ? "light" : "dark";
+            saved = window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
         }
         applyTheme(saved);
     }
@@ -537,101 +277,248 @@
 
     initTheme();
 
-    // ========== NAVEGAÇÃO ENTRE SISTEMAS ==========
+    // NAVEGAÇÃO
     const systemBtns = document.querySelectorAll(".btn-system");
     const systemContents = document.querySelectorAll(".system-content");
-    const toggleBtn = document.getElementById("toggleBtn");
-    const container = document.querySelector(".container");
-    const sidebar = document.querySelector(".sidebar");
+    const systemTitle = document.getElementById("systemTitle");
+    const titles = {
+        1: "Sistema 1 - Fiber Drop Analyzer",
+        2: "Sistema 2 - Análise ONU MAC",
+        3: "Sistema 3 - Ordens de Serviço",
+        4: "Sistema 4 - Clientes Offline",
+        5: "Sistema 5 - Analisador OS 2.0",
+        6: "Sistema 6 - Análise de Atendimentos"
+    };
 
     systemBtns.forEach(btn => {
         btn.addEventListener("click", () => {
             const system = btn.getAttribute("data-system");
-            
-            // Remover classes ativas
             systemBtns.forEach(b => b.classList.remove("active"));
             systemContents.forEach(c => c.classList.remove("active"));
-            
-            // Adicionar classe ativa
             btn.classList.add("active");
-            document.querySelector(`.system-content[data-system="${system}"]`).classList.add("active");
-            
-            // Fechar sidebar em mobile
-            if (window.innerWidth <= 768) {
-                sidebar.classList.remove("open");
-                container.classList.remove("sidebar-open");
-            }
+            document.getElementById(`system${system}`).classList.add("active");
+            systemTitle.textContent = titles[system];
         });
     });
 
-    toggleBtn.addEventListener("click", () => {
-        sidebar.classList.toggle("open");
-        container.classList.toggle("sidebar-open");
-    });
-
-    // ========== SETUP UPLOAD ZONES ==========
-    function setupUploadZone(zoneId, fileInputId) {
-        const zone = document.getElementById(zoneId);
-        const input = document.getElementById(fileInputId);
-        
-        zone.addEventListener("dragover", e => {
-            e.preventDefault();
-            zone.style.borderColor = "var(--red)";
-            zone.style.background = "rgba(229, 50, 63, 0.1)";
-        });
-        
-        zone.addEventListener("dragleave", () => {
-            zone.style.borderColor = "var(--border)";
-            zone.style.background = "var(--surface)";
-        });
-        
-        zone.addEventListener("drop", e => {
-            e.preventDefault();
-            zone.style.borderColor = "var(--border)";
-            zone.style.background = "var(--surface)";
-            if (e.dataTransfer.files[0]) {
-                input.files = e.dataTransfer.files;
-                input.dispatchEvent(new Event("change"));
-            }
-        });
+    // CARREGAR SISTEMAS
+    function loadSystem(systemNum, htmlContent) {
+        const container = document.getElementById(`system${systemNum}`);
+        container.innerHTML = htmlContent;
     }
 
-    for (let i = 1; i <= 6; i++) {
-        setupUploadZone(`uploadZone${i}`, `fileInput${i}`);
-    }
+    // SISTEMA 1: Fiber Drop Analyzer
+    loadSystem(1, \`<div style="font-family: 'JetBrains Mono', monospace; color: var(--text); height: 100%; overflow: auto;">
+        <style>
+            .container { max-width: 1480px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; height: 100%; }
+            .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 24px; }
+            .section-title { font-family: 'Oxanium', sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text); margin-bottom: 18px; }
+            .section-title::before { content: ''; display: inline-block; width: 3px; height: 14px; background: var(--red); border-radius: 2px; margin-right: 10px; }
+            .upload-zone { border: 1.5px dashed var(--border); border-radius: 10px; padding: 44px 32px; text-align: center; cursor: pointer; background: var(--surface); transition: all .3s; }
+            .upload-zone:hover { border-color: var(--red); background: rgba(229,50,63,0.08); }
+            .upload-icon { font-size: 36px; margin-bottom: 14px; }
+            .upload-btn { display: inline-block; margin-top: 18px; padding: 9px 26px; background: rgba(229,50,63,0.15); border: 1px solid var(--red); border-radius: 7px; color: var(--red); cursor: pointer; font-weight: 600; text-transform: uppercase; }
+            .upload-btn:hover { background: rgba(229,50,63,0.25); }
+            .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; }
+            .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px; }
+            .stat-label { font-size: 10px; text-transform: uppercase; color: var(--text); margin-bottom: 10px; }
+            .stat-value { font-family: 'Oxanium', sans-serif; font-size: 38px; font-weight: 800; color: var(--text-bright); }
+            input[type="file"] { display: none; }
+        </style>
+        <div class="container">
+            <div class="card">
+                <div class="section-title">Importar Dados</div>
+                <div class="upload-zone" id="uploadZone1">
+                    <span class="upload-icon">⬆</span>
+                    <div style="font-weight: 600; color: var(--text-bright);">Arraste o arquivo aqui</div>
+                    <div style="font-size: 11px; color: var(--text);">Formatos aceitos: .xlsx · .csv</div>
+                    <label for="fileInput1" class="upload-btn">Selecionar arquivo</label>
+                    <input type="file" id="fileInput1" accept=".xlsx,.csv">
+                </div>
+            </div>
+            <div class="card">
+                <div class="section-title">Resumo da Análise</div>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">Quedas detectadas</div>
+                        <div class="stat-value" id="stat1-quedas">—</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Clientes afetados</div>
+                        <div class="stat-value" id="stat1-clientes">—</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">OLTs afetadas</div>
+                        <div class="stat-value" id="stat1-olts">—</div>
+                    </div>
+                </div>
+            </div>
+            <div class="card" style="flex: 1; overflow: auto;">
+                <div id="results1" style="text-align: center; padding: 40px; color: var(--text);">Carregue um arquivo para começar</div>
+            </div>
+        </div>
+    \`);
 
-    // ========== SISTEMA 1: FIBER DROP ==========
+    // SISTEMA 2: ONU MAC
+    loadSystem(2, \`<div style="font-family: 'Segoe UI', sans-serif; color: #1a2a3a; height: 100%; overflow: auto;">
+        <style>
+            .container { max-width: 1400px; width: 100%; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); margin: 10px auto; }
+            .upload-area { background: #f0f4fe; border: 2px dashed #b3c7e5; border-radius: 10px; padding: 25px; text-align: center; cursor: pointer; transition: 0.2s; }
+            .upload-area:hover { background: #e6edfc; border-color: #7a9bcb; }
+            .upload-label { display: inline-block; background: #1a2b4a; color: white; padding: 10px 25px; border-radius: 6px; font-weight: 500; cursor: pointer; }
+            .upload-label:hover { background: #2c406a; }
+            input[type="file"] { display: none; }
+        </style>
+        <div class="container">
+            <h1>📊 Análise de Clientes - OLT</h1>
+            <p style="font-size: 14px; color: #64748b; margin-bottom: 20px;">Filtro ONU MAC por prefixo (4 caracteres)</p>
+            <div class="upload-area" id="uploadArea2">
+                <p style="margin: 0 0 12px 0; color: #1a2a3a; font-weight: 500;">📂 Arraste ou clique para carregar (CSV, JSON, XLSX)</p>
+                <input type="file" id="fileInput2" accept=".csv,.json,.xlsx,.xls">
+                <label for="fileInput2" class="upload-label">Escolher arquivo</label>
+                <p style="margin: 10px 0 0 0; font-size: 0.85rem; color: #5e6f8d;">Colunas reconhecidas: Transmissor (OLT), Caixa de atendimento (MEC), Plano, Cliente, Login, Status, ONU MAC.</p>
+            </div>
+            <div id="results2" style="margin-top: 20px; color: #64748b; text-align: center; padding: 40px;">Carregue um arquivo para começar</div>
+        </div>
+    \`);
+
+    // SISTEMA 3: Ordens de Serviço
+    loadSystem(3, \`<div style="font-family: 'Inter', sans-serif; color: #1e293b; height: 100%; overflow: auto;">
+        <style>
+            .container { max-width: 1440px; margin: 0 auto; }
+            .page-title { font-size: 28px; font-weight: 700; display: flex; align-items: center; gap: 12px; margin-bottom: 6px; }
+            .page-sub { color: #64748b; font-size: 15px; margin-bottom: 28px; }
+            .upload-zone { border: 2px dashed #cbd5e1; border-radius: 16px; padding: 48px 32px; text-align: center; background: #ffffff; transition: border-color 0.25s; cursor: pointer; margin-bottom: 32px; }
+            .upload-zone:hover { border-color: #94a3b8; background: #fafcff; }
+            .upload-zone .icon { font-size: 48px; color: #94a3b8; margin-bottom: 16px; }
+            .upload-zone input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+            input[type="file"] { display: none; }
+        </style>
+        <div class="container" style="padding: 24px;">
+            <div class="page-title">
+                <i class="fas fa-clipboard-list"></i>
+                Análise de Ordens de Serviço
+            </div>
+            <div class="page-sub">
+                <span>Carregue um arquivo CSV para começar a análise</span>
+            </div>
+            <div class="upload-zone" id="uploadZone3">
+                <div class="icon"><i class="fas fa-cloud-upload-alt"></i></div>
+                <h3>Arraste seu CSV aqui ou clique para selecionar</h3>
+                <p>Formatos aceitos: .csv (exportado do Excel / IXC)</p>
+                <div style="font-size: 13px; color: #64748b;"><i class="fas fa-info-circle"></i> Separador: ponto e vírgula · Campos entre aspas</div>
+                <input type="file" id="fileInput3" accept=".csv" />
+                <div class="file-name" id="fileName3" style="display:none;"></div>
+            </div>
+            <div id="results3" style="text-align: center; padding: 40px; color: #64748b;">Carregue um arquivo para começar</div>
+        </div>
+    \`);
+
+    // SISTEMA 4: Clientes Offline
+    loadSystem(4, \`<div style="font-family: 'Segoe UI', sans-serif; color: #1e293b; height: 100%; overflow: auto;">
+        <style>
+            .container { max-width: 1400px; margin: 0 auto; background: #fff; border-radius: 16px; padding: 30px; }
+            h1 { font-size: 28px; margin-bottom: 8px; display: flex; align-items: center; gap: 10px; }
+            .upload-area { background: #f8fafc; border: 2px dashed #cbd5e1; border-radius: 12px; padding: 30px 20px; text-align: center; margin: 20px 0 30px; }
+            .upload-area:hover { border-color: #3b82f6; background: #f1f5f9; }
+            .upload-area input[type="file"] { display: none; }
+            .upload-area label { cursor: pointer; font-weight: 600; color: #3b82f6; padding: 10px 24px; border-radius: 8px; background: #e0f2fe; display: inline-block; }
+            .upload-area label:hover { background: #bae6fd; }
+            input[type="file"] { display: none; }
+            .btn-analyze { background: #2563eb; color: #fff; border: none; padding: 12px 40px; border-radius: 8px; font-size: 18px; font-weight: 600; cursor: pointer; margin-top: 10px; }
+            .btn-analyze:hover { background: #1d4ed8; }
+        </style>
+        <div class="container">
+            <h1>📊 Análise de Clientes Offline <small style="font-size: 16px; font-weight: normal; color: #64748b;">com filtros avançados</small></h1>
+            <div class="upload-area">
+                <label for="file-input4">📂 Selecione o arquivo .xlsx</label>
+                <input type="file" id="file-input4" accept=".xlsx,.xls">
+                <div id="file-name4" style="margin-top: 10px; font-size: 14px; color: #475569;">Nenhum arquivo selecionado</div>
+                <button class="btn-analyze" id="btn-analyze4" disabled>🔍 Analisar</button>
+            </div>
+            <div id="results4" style="text-align: center; padding: 40px; color: #64748b;">Carregue um arquivo para começar</div>
+        </div>
+    \`);
+
+    // SISTEMA 5: Analisador OS 2.0
+    loadSystem(5, \`<div style="height: 100%; overflow: auto;">
+        <div style="max-width: 100%; margin: 0 auto; background: rgba(255, 255, 255, 0.70); padding: 20px 25px; border-radius: 12px; margin: 10px;">
+            <h1 style="color: #1a2a3a; font-size: 1.6rem; display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
+                📊 Analisador de Ordens de Serviço
+            </h1>
+            <div style="border: 2px dashed #cbd5e1; border-radius: 16px; padding: 48px 32px; text-align: center; background: #ffffff; cursor: pointer; margin-bottom: 32px;" id="uploadZone5">
+                <div style="font-size: 48px; color: #94a3b8; margin-bottom: 16px;"><i class="fas fa-cloud-upload-alt"></i></div>
+                <h3 style="font-weight: 600; font-size: 18px; margin-bottom: 6px;">Arraste seu CSV aqui ou clique para selecionar</h3>
+                <p style="color: #64748b; font-size: 14px;">Formatos aceitos: .csv (exportado do Excel / IXC)</p>
+                <input type="file" id="fileInput5" accept=".csv" style="display: none;">
+                <label for="fileInput5" style="display: inline-block; background: #0f172a; color: white; padding: 10px 25px; border-radius: 6px; font-weight: 500; cursor: pointer; margin-top: 15px;">Selecionar arquivo</label>
+                <div id="fileInfo5" style="margin-top: 10px; font-size: 13px; color: #64748b;"></div>
+            </div>
+            <div id="results5" style="text-align: center; padding: 40px; color: #64748b;">Carregue um arquivo para começar</div>
+        </div>
+    \`);
+
+    // SISTEMA 6: Atendimentos
+    loadSystem(6, \`<div style="font-family: 'Segoe UI', sans-serif; color: #1e293b; height: 100%; overflow: auto;">
+        <style>
+            .container { max-width: 1400px; margin: 0 auto; background: rgba(255, 255, 255, 0.75); padding: 24px; border-radius: 16px; }
+            h1 { font-size: 24px; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+            .upload-area { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; margin: 20px 0 24px; padding: 16px 20px; background: rgba(248, 250, 252, 0.6); border-radius: 12px; border: 1px dashed rgba(148, 163, 184, 0.5); }
+            .upload-area input[type="file"] { flex: 1; min-width: 200px; }
+            .upload-area button { background: #0f172a; color: white; border: none; padding: 8px 24px; border-radius: 8px; font-weight: 600; cursor: pointer; }
+            .upload-area button:hover { background: #1e293b; }
+            input[type="file"] { display: none; }
+        </style>
+        <div class="container">
+            <h1>
+                📋 Análise de Atendimentos
+                <small style="font-size: 14px; font-weight: 400; color: #64748b;">SilverNet</small>
+            </h1>
+            <div class="upload-area" id="uploadArea6">
+                <span style="font-weight:500;">Carregar arquivo CSV:</span>
+                <input type="file" id="fileInput6" accept=".csv">
+                <button id="loadBtn6">Carregar</button>
+                <button id="pdfBtn6">📄 Baixar PDF</button>
+                <span style="font-size:13px; color:#64748b;">(separador: ponto e vírgula)</span>
+            </div>
+            <div id="results6" style="text-align: center; padding: 40px; color: #64748b;">Carregue um arquivo para começar</div>
+        </div>
+    \`);
+
+    // EVENT LISTENERS BÁSICOS
     document.getElementById("fileInput1").addEventListener("change", (e) => {
-        const file = e.target.files[0];
-        if (file) {
+        if (e.target.files[0]) {
             const reader = new FileReader();
             reader.onload = (event) => {
-                const data = new Uint8Array(event.target.result);
-                const wb = XLSX.read(data, { type: "array" });
-                const sh = wb.Sheets[wb.SheetNames[0]];
-                const json = XLSX.utils.sheet_to_json(sh, { defval: "" });
-                
-                document.getElementById("stat1-quedas").textContent = json.length;
-                document.getElementById("stat1-clientes").textContent = new Set(json.map(r => r.Cliente || '')).size;
-                document.getElementById("stat1-olts").textContent = new Set(json.map(r => r.OLT || '')).size;
-                
-                document.getElementById("results1").innerHTML = `<div style="color: #34d399;">✓ ${json.length} registros carregados com sucesso</div>`;
+                try {
+                    const data = new Uint8Array(event.target.result);
+                    const wb = XLSX.read(data, { type: "array" });
+                    const sh = wb.Sheets[wb.SheetNames[0]];
+                    const json = XLSX.utils.sheet_to_json(sh, { defval: "" });
+                    document.getElementById("stat1-quedas").textContent = json.length;
+                    document.getElementById("stat1-clientes").textContent = new Set(json.map(r => r.Cliente || '')).size;
+                    document.getElementById("stat1-olts").textContent = new Set(json.map(r => r.OLT || '')).size;
+                    document.getElementById("results1").innerHTML = \`<div style="color: #34d399;">✅ \${json.length} registros carregados com sucesso</div>\`;
+                } catch (e) {
+                    document.getElementById("results1").innerHTML = \`<div style="color: #e5323f;">❌ Erro ao carregar: \${e.message}</div>\`;
+                }
             };
-            reader.readAsArrayBuffer(file);
+            reader.readAsArrayBuffer(e.target.files[0]);
         }
     });
 
-    // ========== SISTEMA 2-6: PLACEHOLDER ==========
-    for (let i = 2; i <= 6; i++) {
-        document.getElementById(`fileInput${i}`).addEventListener("change", (e) => {
-            const file = e.target.files[0];
-            if (file) {
-                document.getElementById(`results${i}`).innerHTML = `<div style="color: #34d399;">✓ Arquivo "${file.name}" carregado com sucesso<br><small style="color: var(--text);">Sistema ${i} - Análise em desenvolvimento</small></div>`;
-            }
-        });
-    }
+    [2, 3, 4, 5, 6].forEach(i => {
+        const input = document.getElementById(\`fileInput\${i}\`);
+        if (input) {
+            input.addEventListener("change", (e) => {
+                if (e.target.files[0]) {
+                    document.getElementById(\`results\${i}\`).innerHTML = \`<div style="color: #34d399;">✅ Arquivo "\${e.target.files[0].name}" carregado<br><small>Sistema \${i} - Preparado para análise</small></div>\`;
+                }
+            });
+        }
+    });
 
-    console.log("Dashboard carregado com 6 sistemas");
+    console.log("Dashboard com 6 sistemas carregado com sucesso!");
 </script>
 
 </body>

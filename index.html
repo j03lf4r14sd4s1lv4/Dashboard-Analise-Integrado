@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - 6 Sistemas de Análise</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        :root {
+            --bg: #0c0c0f;
+            --surface: rgba(17, 17, 22, 0.75);
+            --card: rgba(22, 22, 29, 0.78);
+            --border: rgba(34, 34, 48, 0.5);
+            --red: #e5323f;
+            --text: #b8bcc8;
+            --text-bright: #eceef5;
+            --mono: 'JetBrains Mono', monospace;
+            --head: 'Oxanium', sans-serif;
+        }
+
+        [data-theme="light"] {
+            --bg: #f2f2f5;
+            --surface: rgba(255, 255, 255, 0.78);
+            --card: rgba(255, 255, 255, 0.82);
+            --border: rgba(200, 200, 210, 0.6);
+            --red: #d1202f;
+            --text: #40414d;
+            --text-bright: #16161d;
+        }
+
+        html, body { height: 100%; }
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: var(--mono);
+            overflow: hidden;
+            transition: background .3s ease, color .3s ease;
+        }
+
+        .container {
+            display: flex;
+            height: 100vh;
+            gap: 0;
+        }
+
+        /* SIDEBAR GAVETA */
+        .sidebar {
+            width: 280px;
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s ease;
+            overflow-y: auto;
+            z-index: 100;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .sidebar-header h2 {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-bright);
+            font-family: var(--head);
+        }
+
+        .toggle-sidebar {
+            background: none;
+            border: none;
+            color: var(--text);
+            cursor: pointer;
+            font-size: 18px;
+            padding: 4px;
+        }
+
+        .toggle-sidebar:hover {
+            color: var(--red);
+        }
+
+        .sidebar-buttons {
+            flex: 1;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            overflow-y: auto;
+        }
+
+        .btn-system {
+            padding: 12px 16px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            cursor: pointer;
+            font-family: var(--mono);
+            font-size: 12px;
+            font-weight: 600;
+            text-align: left;
+            transition: all .2s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .btn-system:hover {
+            background: rgba(229, 50, 63, 0.15);
+            border-color: var(--red);
+            color: var(--red);
+        }
+
+        .btn-system.active {
+            background: rgba(229, 50, 63, 0.25);
+            border-color: var(--red);
+            color: var(--red);
+            box-shadow: 0 0 12px rgba(229, 50, 63, 0.3);
+        }
+
+        /* MAIN CONTENT */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .header {
+            padding: 16px 20px;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-bright);
+            font-family: var(--head);
+        }
+
+        .theme-toggle {
+            background: var(--card);
+            border: 1px solid var(--border);
+            padding: 6px 12px;
+            border-radius: 6px;
+            color: var(--text);
+            cursor: pointer;
+            font-size: 14px;
+            transition: all .2s ease;
+        }
+
+        .theme-toggle:hover {
+            border-color: var(--red);
+            color: var(--red);
+        }
+
+        /* CONTENT AREA */
+        .content-area {
+            flex: 1;
+            overflow: auto;
+            padding: 0;
+            background: var(--bg);
+        }
+
+        .system-content {
+            display: none;
+            height: 100%;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .system-content.active {
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Estilos para cada sistema */
+        .upload-zone {
+            border: 1.5px dashed var(--border);
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            background: var(--surface);
+            transition: all .3s ease;
+            margin-bottom: 20px;
+        }
+
+        .upload-zone:hover {
+            border-color: var(--red);
+            background: rgba(229, 50, 63, 0.08);
+        }
+
+        .upload-zone input[type="file"] { display: none; }
+
+        .upload-btn {
+            display: inline-block;
+            margin-top: 12px;
+            padding: 8px 20px;
+            background: rgba(229, 50, 63, 0.15);
+            border: 1px solid var(--red);
+            border-radius: 6px;
+            color: var(--red);
+            font-family: var(--mono);
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all .2s ease;
+            text-transform: uppercase;
+        }
+
+        .upload-btn:hover {
+            background: rgba(229, 50, 63, 0.25);
+            box-shadow: 0 0 12px rgba(229, 50, 63, 0.3);
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+
+        .section-title {
+            font-family: var(--head);
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--text);
+            margin-bottom: 16px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+        }
+
+        .stat-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text);
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-family: var(--head);
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--text-bright);
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            flex: 1;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+
+        th {
+            background: var(--surface);
+            padding: 10px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-bright);
+            position: sticky;
+            top: 0;
+        }
+
+        td {
+            padding: 8px 10px;
+            border-bottom: 1px solid var(--border);
+            color: var(--text);
+        }
+
+        tr:hover td {
+            background: rgba(229, 50, 63, 0.05);
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 240px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                left: 0;
+                top: 0;
+                height: 100vh;
+                z-index: 1000;
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .container.sidebar-open .sidebar {
+                transform: translateX(0);
+            }
+
+            .toggle-sidebar {
+                display: flex;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            color: var(--text);
+        }
+
+        .loading.active { display: block; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- SIDEBAR GAVETA LATERAL -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h2>📊 Sistemas</h2>
+            <button class="toggle-sidebar" id="toggleBtn">✕</button>
+        </div>
+        <div class="sidebar-buttons">
+            <button class="btn-system active" data-system="1">1. Fiber Drop<br>Analyzer</button>
+            <button class="btn-system" data-system="2">2. Análise ONU<br>MAC</button>
+            <button class="btn-system" data-system="3">3. Ordens de<br>Serviço</button>
+            <button class="btn-system" data-system="4">4. Clientes<br>Offline</button>
+            <button class="btn-system" data-system="5">5. Analisador<br>OS 2.0</button>
+            <button class="btn-system" data-system="6">6. Atendimentos<br>SilverNet</button>
+        </div>
+    </div>
+
+    <!-- CONTEÚDO PRINCIPAL -->
+    <div class="main-content">
+        <div class="header">
+            <div class="header-title">Sistema Integrado de Análise</div>
+            <button class="theme-toggle" id="themeToggle">🌙 Tema</button>
+        </div>
+
+        <div class="content-area">
+            <!-- SISTEMA 1: FIBER DROP ANALYZER -->
+            <div class="system-content active" data-system="1">
+                <div class="card">
+                    <div class="section-title">▸ Importar Dados</div>
+                    <div class="upload-zone" id="uploadZone1">
+                        <span style="font-size: 24px; display: block; margin-bottom: 10px;">⬆</span>
+                        <div style="font-weight: 600; color: var(--text-bright); margin-bottom: 4px;">Arraste aqui ou clique</div>
+                        <div style="font-size: 11px; color: var(--text);">Formatos: .xlsx · .csv</div>
+                        <label for="fileInput1" class="upload-btn">Selecionar</label>
+                        <input type="file" id="fileInput1" accept=".xlsx,.csv">
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="section-title">▸ Resumo da Análise</div>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-label">Quedas Detectadas</div>
+                            <div class="stat-value" id="stat1-quedas">—</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Clientes Afetados</div>
+                            <div class="stat-value" id="stat1-clientes">—</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">OLTs Afetadas</div>
+                            <div class="stat-value" id="stat1-olts">—</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card" style="flex: 1; overflow: auto;">
+                    <div class="section-title">▸ Resultado por Região</div>
+                    <div id="results1" style="color: var(--text); text-align: center; padding: 40px;">Carregue um arquivo para começar</div>
+                </div>
+            </div>
+
+            <!-- SISTEMA 2: ANÁLISE ONU MAC -->
+            <div class="system-content" data-system="2">
+                <div class="card">
+                    <div class="section-title">▸ Importar Dados ONU MAC</div>
+                    <div class="upload-zone" id="uploadZone2">
+                        <span style="font-size: 24px; display: block; margin-bottom: 10px;">📂</span>
+                        <div style="font-weight: 600; color: var(--text-bright); margin-bottom: 4px;">Carregue seu arquivo</div>
+                        <div style="font-size: 11px; color: var(--text);">CSV, JSON, XLSX</div>
+                        <label for="fileInput2" class="upload-btn">Escolher arquivo</label>
+                        <input type="file" id="fileInput2" accept=".csv,.json,.xlsx,.xls">
+                    </div>
+                </div>
+                <div class="card" style="flex: 1; overflow: auto;">
+                    <div id="results2" style="color: var(--text); text-align: center; padding: 40px;">Carregue um arquivo para começar</div>
+                </div>
+            </div>
+
+            <!-- SISTEMA 3: ORDENS DE SERVIÇO -->
+            <div class="system-content" data-system="3">
+                <div class="card">
+                    <div class="section-title">▸ Importar Ordens de Serviço</div>
+                    <div class="upload-zone" id="uploadZone3">
+                        <span style="font-size: 24px; display: block; margin-bottom: 10px;">📋</span>
+                        <div style="font-weight: 600; color: var(--text-bright); margin-bottom: 4px;">Arraste seu CSV aqui</div>
+                        <div style="font-size: 11px; color: var(--text);">Separador: ponto e vírgula</div>
+                        <label for="fileInput3" class="upload-btn">Selecionar arquivo</label>
+                        <input type="file" id="fileInput3" accept=".csv">
+                    </div>
+                </div>
+                <div class="card" style="flex: 1; overflow: auto;">
+                    <div id="results3" style="color: var(--text); text-align: center; padding: 40px;">Carregue um arquivo para começar</div>
+                </div>
+            </div>
+
+            <!-- SISTEMA 4: CLIENTES OFFLINE -->
+            <div class="system-content" data-system="4">
+                <div class="card">
+                    <div class="section-title">▸ Importar Dados Clientes</div>
+                    <div class="upload-zone" id="uploadZone4">
+                        <span style="font-size: 24px; display: block; margin-bottom: 10px;">🔴</span>
+                        <div style="font-weight: 600; color: var(--text-bright); margin-bottom: 4px;">Selecione o arquivo .xlsx</div>
+                        <div style="font-size: 11px; color: var(--text);">Processamento local - sem envio de dados</div>
+                        <label for="fileInput4" class="upload-btn">Escolher arquivo</label>
+                        <input type="file" id="fileInput4" accept=".xlsx,.xls">
+                    </div>
+                </div>
+                <div class="card" style="flex: 1; overflow: auto;">
+                    <div id="results4" style="color: var(--text); text-align: center; padding: 40px;">Carregue um arquivo para começar</div>
+                </div>
+            </div>
+
+            <!-- SISTEMA 5: ANALISADOR OS 2.0 -->
+            <div class="system-content" data-system="5">
+                <div class="card">
+                    <div class="section-title">▸ Importar Ordens 2.0</div>
+                    <div class="upload-zone" id="uploadZone5">
+                        <span style="font-size: 24px; display: block; margin-bottom: 10px;">📁</span>
+                        <div style="font-weight: 600; color: var(--text-bright); margin-bottom: 4px;">Carregue seu arquivo CSV ou XLSX</div>
+                        <label for="fileInput5" class="upload-btn">Selecionar arquivo</label>
+                        <input type="file" id="fileInput5" accept=".csv,.xlsx,.xls">
+                    </div>
+                </div>
+                <div class="card" style="flex: 1; overflow: auto;">
+                    <div id="results5" style="color: var(--text); text-align: center; padding: 40px;">Carregue um arquivo para começar</div>
+                </div>
+            </div>
+
+            <!-- SISTEMA 6: ANÁLISE DE ATENDIMENTOS -->
+            <div class="system-content" data-system="6">
+                <div class="card">
+                    <div class="section-title">▸ Importar Atendimentos</div>
+                    <div class="upload-zone" id="uploadZone6">
+                        <span style="font-size: 24px; display: block; margin-bottom: 10px;">📞</span>
+                        <div style="font-weight: 600; color: var(--text-bright); margin-bottom: 4px;">Carregar arquivo CSV</div>
+                        <div style="font-size: 11px; color: var(--text);">Separador: ponto e vírgula</div>
+                        <label for="fileInput6" class="upload-btn">Carregar</label>
+                        <input type="file" id="fileInput6" accept=".csv">
+                    </div>
+                </div>
+                <div class="card" style="flex: 1; overflow: auto;">
+                    <div id="results6" style="color: var(--text); text-align: center; padding: 40px;">Carregue um arquivo para começar</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ========== TEMA ==========
+    const THEME_KEY = "dashboardTheme";
+    
+    function applyTheme(theme) {
+        if (theme === "light") {
+            document.documentElement.setAttribute("data-theme", "light");
+            document.getElementById("themeToggle").textContent = "☀️ Tema";
+        } else {
+            document.documentElement.removeAttribute("data-theme");
+            document.getElementById("themeToggle").textContent = "🌙 Tema";
+        }
+    }
+
+    function initTheme() {
+        let saved = null;
+        try { saved = localStorage.getItem(THEME_KEY); } catch (e) {}
+        if (!saved) {
+            saved = window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches
+                ? "light" : "dark";
+        }
+        applyTheme(saved);
+    }
+
+    document.getElementById("themeToggle").addEventListener("click", () => {
+        const isLight = document.documentElement.getAttribute("data-theme") === "light";
+        const next = isLight ? "dark" : "light";
+        applyTheme(next);
+        try { localStorage.setItem(THEME_KEY, next); } catch (e) {}
+    });
+
+    initTheme();
+
+    // ========== NAVEGAÇÃO ENTRE SISTEMAS ==========
+    const systemBtns = document.querySelectorAll(".btn-system");
+    const systemContents = document.querySelectorAll(".system-content");
+    const toggleBtn = document.getElementById("toggleBtn");
+    const container = document.querySelector(".container");
+    const sidebar = document.querySelector(".sidebar");
+
+    systemBtns.forEach(btn => {
+        btn.addEventListener("click", () => {
+            const system = btn.getAttribute("data-system");
+            
+            // Remover classes ativas
+            systemBtns.forEach(b => b.classList.remove("active"));
+            systemContents.forEach(c => c.classList.remove("active"));
+            
+            // Adicionar classe ativa
+            btn.classList.add("active");
+            document.querySelector(`.system-content[data-system="${system}"]`).classList.add("active");
+            
+            // Fechar sidebar em mobile
+            if (window.innerWidth <= 768) {
+                sidebar.classList.remove("open");
+                container.classList.remove("sidebar-open");
+            }
+        });
+    });
+
+    toggleBtn.addEventListener("click", () => {
+        sidebar.classList.toggle("open");
+        container.classList.toggle("sidebar-open");
+    });
+
+    // ========== SETUP UPLOAD ZONES ==========
+    function setupUploadZone(zoneId, fileInputId) {
+        const zone = document.getElementById(zoneId);
+        const input = document.getElementById(fileInputId);
+        
+        zone.addEventListener("dragover", e => {
+            e.preventDefault();
+            zone.style.borderColor = "var(--red)";
+            zone.style.background = "rgba(229, 50, 63, 0.1)";
+        });
+        
+        zone.addEventListener("dragleave", () => {
+            zone.style.borderColor = "var(--border)";
+            zone.style.background = "var(--surface)";
+        });
+        
+        zone.addEventListener("drop", e => {
+            e.preventDefault();
+            zone.style.borderColor = "var(--border)";
+            zone.style.background = "var(--surface)";
+            if (e.dataTransfer.files[0]) {
+                input.files = e.dataTransfer.files;
+                input.dispatchEvent(new Event("change"));
+            }
+        });
+    }
+
+    for (let i = 1; i <= 6; i++) {
+        setupUploadZone(`uploadZone${i}`, `fileInput${i}`);
+    }
+
+    // ========== SISTEMA 1: FIBER DROP ==========
+    document.getElementById("fileInput1").addEventListener("change", (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const data = new Uint8Array(event.target.result);
+                const wb = XLSX.read(data, { type: "array" });
+                const sh = wb.Sheets[wb.SheetNames[0]];
+                const json = XLSX.utils.sheet_to_json(sh, { defval: "" });
+                
+                document.getElementById("stat1-quedas").textContent = json.length;
+                document.getElementById("stat1-clientes").textContent = new Set(json.map(r => r.Cliente || '')).size;
+                document.getElementById("stat1-olts").textContent = new Set(json.map(r => r.OLT || '')).size;
+                
+                document.getElementById("results1").innerHTML = `<div style="color: #34d399;">✓ ${json.length} registros carregados com sucesso</div>`;
+            };
+            reader.readAsArrayBuffer(file);
+        }
+    });
+
+    // ========== SISTEMA 2-6: PLACEHOLDER ==========
+    for (let i = 2; i <= 6; i++) {
+        document.getElementById(`fileInput${i}`).addEventListener("change", (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                document.getElementById(`results${i}`).innerHTML = `<div style="color: #34d399;">✓ Arquivo "${file.name}" carregado com sucesso<br><small style="color: var(--text);">Sistema ${i} - Análise em desenvolvimento</small></div>`;
+            }
+        });
+    }
+
+    console.log("Dashboard carregado com 6 sistemas");
+</script>
+
+</body>
+</html>
